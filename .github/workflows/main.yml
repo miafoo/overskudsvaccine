@@ -1,0 +1,26 @@
+name: Daily run
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * *"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v2
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: "v1.x"
+
+      - name: Setup Puppeteer
+        run: PUPPETEER_PRODUCT=chrome deno run -A --unstable https://deno.land/x/puppeteer@9.0.1/install.ts
+
+      # TODO: Use ENV variables and run all users.
+      - name: Run Puppeteer
+        run: deno run -A --unstable main.ts
