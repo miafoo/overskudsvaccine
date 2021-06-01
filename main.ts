@@ -1,32 +1,34 @@
 import puppeteer from "https://deno.land/x/puppeteer@9.0.1/mod.ts";
 import { LOCATIONS } from "./locations.ts";
 
-const PERSON_FULL_NAME = Deno.env.get("FULL_NAME");
-const PERSON_AGE = Deno.env.get("AGE");
-const PERSON_ADDRESS = Deno.env.get("STREET");
-const PERSON_ZIP_AND_CITY = Deno.env.get("ZIP_AND_CITY");
-const PERSON_PHONE = Deno.env.get("PHONE");
-const PERSON_LOCATION = Deno.env.get("LOCATION");
+const DRY_RUN = !!Deno.env.get("DRY_RUN");
 
-if (!PERSON_FULL_NAME) {
+const FULL_NAME = Deno.env.get("FULL_NAME");
+const AGE = Deno.env.get("AGE");
+const STREET = Deno.env.get("STREET");
+const ZIP_AND_CITY = Deno.env.get("ZIP_AND_CITY");
+const PHONE = Deno.env.get("PHONE");
+const LOCATION = Deno.env.get("LOCATION");
+
+if (!FULL_NAME) {
   throw new Error("Missing FULL_NAME");
 }
-if (!PERSON_AGE) {
+if (!AGE) {
   throw new Error("Missing AGE");
 }
-if (!PERSON_ADDRESS) {
-  throw new Error("Missing ADDRESS");
+if (!STREET) {
+  throw new Error("Missing STREET");
 }
-if (!PERSON_ZIP_AND_CITY) {
+if (!ZIP_AND_CITY) {
   throw new Error("Missing ZIP_AND_CITY");
 }
-if (!PERSON_PHONE) {
+if (!PHONE) {
   throw new Error("Missing PHONE");
 }
-if (!PERSON_LOCATION) {
+if (!LOCATION) {
   throw new Error("Missing LOCATION");
 }
-if (!LOCATIONS.includes(PERSON_LOCATION)) {
+if (!LOCATIONS.includes(LOCATION)) {
   throw new Error("Invalid LOCATION");
 }
 
@@ -45,22 +47,23 @@ await page.goto(
 // Skip the main page
 await page.click("input.next-button");
 
-const fillStep = async (text: string) => {
+const fillStep = async (field: string, text: string) => {
+  console.log('Filling', field)
   await page.waitForSelector('input[type="text"]');
   await page.type('input[type="text"]', text);
   await page.click("input.next-button");
 };
 
 // Fill in details
-await fillStep(PERSON_FULL_NAME);
-await fillStep(PERSON_AGE);
-await fillStep(PERSON_ADDRESS);
-await fillStep(PERSON_ZIP_AND_CITY);
-await fillStep(PERSON_PHONE);
+await fillStep('FULL_NAME', FULL_NAME);
+await fillStep('AGE', AGE);
+await fillStep('STREET', STREET);
+await fillStep('ZIP_AND_CITY', ZIP_AND_CITY);
+await fillStep('PHONE', PHONE);
 
 // Select location
 await page.waitForSelector('input[type="radio"]');
-const label = await page.$x(`//label[contains(text(), "${PERSON_LOCATION}")]`);
+const label = await page.$x(`//label[contains(text(), "${LOCATION}")]`);
 await label[0].click();
 await page.click("input.next-button");
 
@@ -69,8 +72,10 @@ await page.waitForTimeout(1_000);
 await page.click("input.next-button");
 
 // Submit the form
-await page.waitForTimeout(1_000);
-await page.click("input.next-button");
+if (!DRY_RUN) {
+  await page.waitForTimeout(1_000);
+  await page.click("input.next-button");
+}
 
 // Make sure the form is submitted before we close the browser
 await page.waitForTimeout(5_000);
