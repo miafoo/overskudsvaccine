@@ -21,6 +21,13 @@ jobs:
       - name: Setup Puppeteer
         run: PUPPETEER_PRODUCT=chrome deno run -A --unstable https://deno.land/x/puppeteer@9.0.1/install.ts
 
-      # TODO: Use ENV variables and run all users.
       - name: Run Puppeteer
         run: deno run -A --unstable main.ts
+        env:
+          DRY_RUN: true
+          FULL_NAME: John Smith
+          AGE: 29
+          STREET: Street 1B
+          ZIP_AND_CITY: 1234 Foobar
+          PHONE: 12345678
+          LOCATION: Invalid location test
