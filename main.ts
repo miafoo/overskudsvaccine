@@ -62,17 +62,20 @@ await fillStep('ZIP_AND_CITY', ZIP_AND_CITY);
 await fillStep('PHONE', PHONE);
 
 // Select location
+console.log('Selecting location');
 await page.waitForSelector('input[type="radio"]');
 const label = await page.$x(`//label[contains(text(), "${LOCATION}")]`);
 await label[0].click();
 await page.click("input.next-button");
 
 // Accept "your data"
+console.log('Accepting Your Data');
 await page.waitForTimeout(1_000);
 await page.click("input.next-button");
 
 // Submit the form
 if (!DRY_RUN) {
+  console.log('Submitting form');
   await page.waitForTimeout(1_000);
   await page.click("input.next-button");
 }
