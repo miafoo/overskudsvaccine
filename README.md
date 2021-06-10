@@ -83,3 +83,5 @@ jobs:
         env:
           LOCATION: Bella Center, Ørestad Boulevard/Martha Christensens Vej, København S
 ```
+
+Note that using Github Actions for this could be against the terms so use at your own risk - read more: https://docs.github.com/en/github/site-policy/github-terms-for-additional-products-and-features#actions
